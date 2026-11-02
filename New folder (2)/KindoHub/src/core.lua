@@ -1,16 +1,21 @@
---[[ 
-  CORE MODULE
-  Handles global state, persistence, and utility functions.
-]]
-
 local Core = {}
-local RunService = game:GetService("RunService")
-local HttpService = game:GetService("HttpService")
+Core.Version = "1.0.0"
+Core.Theme = {
+    Bg = Color3.fromRGB(18, 18, 18),
+    Panel = Color3.fromRGB(28, 28, 32),
+    Accent = Color3.fromRGB(0, 255, 255),
+    AccentAlt = Color3.fromRGB(255, 0, 255),
+    Text = Color3.fromRGB(240, 240, 240),
+    TextDim = Color3.fromRGB(120, 120, 130),
+    Success = Color3.fromRGB(0, 255, 100),
+    Error = Color3.fromRGB(255, 60, 60),
+    Border = Color3.fromRGB(50, 50, 60)
+}
 
 -- 1. GLOBAL STATE PERSISTENCE
--- Uses getgenv() to survive script reloads within the session
 Core.State = getgenv().KindoHubState or {
     ActiveKey = nil,
+    Tier = nil,
     Settings = {
         FOV = 150,
         AimKey = "MouseButton1",
@@ -55,13 +60,7 @@ function Core.GetHumanoid()
     return char and char:FindFirstChildOfClass("Humanoid")
 end
 
-function Core.IsHumanoidValid()
-    local hum = Core.GetHumanoid()
-    return hum and hum.Health > 0
-end
-
 -- 3. EVENT BRIDGE
--- Allows modules to subscribe to core events without direct coupling
 Core.Events = {}
 function Core.On(event, callback)
     Core.Events[event] = Core.Events[event] or {}
@@ -76,4 +75,6 @@ function Core.Emit(event, ...)
     end
 end
 
+-- Register in Global Namespace
+_G.KindoCore = Core
 return Core
